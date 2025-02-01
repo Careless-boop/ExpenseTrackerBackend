@@ -13,9 +13,17 @@ namespace ExpenseTracker.Infrastructure.Persistense.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<IEnumerable<Transaction>> GetAllByCategoryAsync(Guid categoryId)
+        {
+            return await _dbContext.Transactions.Where(t => t.CategoryId == categoryId).ToListAsync();
+        }
+
         public async Task<IEnumerable<Transaction>> GetAllForUserAsync(string userId)
         {
-            return await _dbContext.Transactions.Where(t => t.UserId == userId).ToListAsync();
+            return await _dbContext.Transactions
+                .Include(t => t.Category)                  
+                .Where(t => t.Category!.UserId == userId)
+                .ToListAsync();
         }
     }
 }

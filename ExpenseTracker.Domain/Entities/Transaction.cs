@@ -5,6 +5,7 @@ namespace ExpenseTracker.Domain.Entities
     public class Transaction : IEntity
     {
         public Guid Id { get; set; }
+
         public string Note { get; set; } = string.Empty;
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
@@ -13,6 +14,6 @@ namespace ExpenseTracker.Domain.Entities
         public Guid CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        public string UserId { get; set; } = null!;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

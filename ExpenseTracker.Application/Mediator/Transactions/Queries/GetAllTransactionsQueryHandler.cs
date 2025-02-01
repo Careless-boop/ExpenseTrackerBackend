@@ -1,5 +1,5 @@
 ﻿using ExpenseTracker.Application.Common.Interfaces.Repositories;
-using ExpenseTracker.Application.DTOs;
+using ExpenseTracker.Application.DTOs.Transaction;
 using MediatR;
 
 namespace ExpenseTracker.Application.Mediator.Transactions.Queries
@@ -20,15 +20,7 @@ namespace ExpenseTracker.Application.Mediator.Transactions.Queries
         {
             var transactions = await _repositoryWrapper.TransactionRepository.GetAllForUserAsync(request.UserId);
 
-            var result = transactions.Select(t => new TransactionDto
-            {
-                Id = t.Id,
-                Amount = t.Amount,
-                Date = t.Date,
-                Note = t.Note,
-                CategoryId = t.CategoryId,
-                IsExpense = t.IsExpense
-            });
+            var result = transactions.Select(t => new TransactionDto(t.Id, t.CategoryId, t.Amount, t.Date, t.IsExpense, t.CreatedAt, t.Note));
 
             return result;
         }

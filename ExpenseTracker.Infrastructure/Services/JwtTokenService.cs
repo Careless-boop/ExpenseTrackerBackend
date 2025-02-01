@@ -2,6 +2,7 @@
 using ExpenseTracker.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,11 +14,13 @@ namespace ExpenseTracker.Infrastructure.Services
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<JwtTokenService> _logger;
 
-        public JwtTokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
+        public JwtTokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager, ILogger<JwtTokenService> logger)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<string?> GenerateTokenAsync(string userId, IList<string> roles)
@@ -30,6 +33,12 @@ namespace ExpenseTracker.Infrastructure.Services
             }
 
             var jwtSecret = _configuration["JwtSettings:Key"];
+            if(jwtSecret == null)
+            {
+                _logger.LogError("JwtSettings:Key is not configured.");
+                return null;
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

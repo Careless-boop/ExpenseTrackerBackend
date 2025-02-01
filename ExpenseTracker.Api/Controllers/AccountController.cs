@@ -79,7 +79,7 @@ namespace ExpenseTracker.Api.Controllers
 
             var token = await _jwtTokenService.GenerateTokenAsync(user.Id, roles);
 
-            return Ok(new { Token = token });
+            return Ok(new { token = token });
         }
     }
 }
